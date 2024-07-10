@@ -164,7 +164,7 @@ echo "Build essential packages installation completed!"
 echo "Installing programs as flatpaks..."
 
 FLATPAK_APPS=(
-    "com.github.florp.florp"
+    "one.ablaze.floorp"
     "com.spotify.Client"
     "dev.alextren.Spotube"
     "net.davidotek.pupgui2"
