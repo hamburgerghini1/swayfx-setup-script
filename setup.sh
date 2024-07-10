@@ -195,21 +195,28 @@ echo "Installing additional packages..."
 case "$PACKAGE_MANAGER" in
     paru)
         echo "Installing packages for Arch Linux..."
-        paru -S --noconfirm --needed swayfx mako wofi rofi swaync sway-interactive-screenshot waybar polkit-gnome wlroots swaync swayng swayidle swayr lxappearance noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ms-fonts autotiling fastfetch pw-volume
+        paru -S --noconfirm --needed swayfx mako wofi rofi swaync waybar polkit-gnome wlroots swaync swaybg swayidle swayr lxappearance noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ms-fonts autotiling fastfetch pw-volume
         ;;
     apt-get)
         echo "Installing packages for Debian-based distribution..."
         apt-get update
-        apt-get install -y sway mako wofi rofi sway-notification-center sway-interactive-screenshot waybar policykit-1-gnome wlroots swaync swayng swayidle swayr lxappearance fonts-noto fonts-noto-cjk fonts-noto-color-emoji fonts-font-awesome ttf-mscorefonts-installer autotiling fastfetch pulseaudio-utils
+        apt-get install -y software-properties-common wget
+        add-apt-repository ppa:swaywm/sway
+        add-apt-repository ppa:agornostal/swaync
+        add-apt-repository ppa:snwh/ppa
+        apt-get update
+        apt-get install -y sway mako wofi rofi sway-notification-center waybar policykit-1-gnome wlroots swaync swaybg swayidle swayr lxappearance fonts-noto fonts-noto-cjk fonts-noto-color-emoji fonts-font-awesome ttf-mscorefonts-installer pulseaudio-utils
+        wget -O fastfetch.deb https://github.com/LinusDierheimer/fastfetch/releases/latest/download/fastfetch_amd64.deb
+        apt-get install -y ./fastfetch.deb
         ;;
     dnf)
         echo "Installing packages for Fedora..."
         dnf copr enable erikreider/SwayNotificationCenter
-        dnf install -y sway mako wofi rofi sway-interactive-screenshot waybar polkit-gnome wlroots swaync swayng swayidle swayr lxappearance google-noto-sans-fonts google-noto-cjk-fonts google-noto-emoji-fonts fontawesome-fonts msttcore-fonts-installer autotiling fastfetch pulseaudio-utils
+        dnf install -y sway mako wofi rofi waybar polkit-gnome wlroots swaync swaybg swayidle swayr lxappearance google-noto-sans-fonts google-noto-cjk-fonts google-noto-emoji-fonts fontawesome-fonts msttcore-fonts-installer autotiling fastfetch pulseaudio-utils
         ;;
     zypper)
         echo "Installing packages for openSUSE..."
-        zypper install -y sway mako wofi rofi SwayNotificationCenter sway-interactive-screenshot waybar polkit-gnome wlroots swaync swayng swayidle swayr lxappearance noto-sans-fonts noto-sans-cjk-fonts noto-emoji-fonts fontawesome-fonts fetchmsttfonts autotiling fastfetch
+        zypper install -y sway mako wofi rofi SwayNotificationCenter waybar polkit-gnome wlroots swaync swaybg swayidle swayr lxappearance noto-sans-fonts noto-sans-cjk-fonts noto-emoji-fonts fontawesome-fonts fetchmsttfonts autotiling fastfetch
         ;;
     *)
         echo "Unsupported package manager: $PACKAGE_MANAGER"
