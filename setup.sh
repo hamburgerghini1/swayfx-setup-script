@@ -1,7 +1,9 @@
 #!/bin/bash
 
 if [ "$EUID" -ne 0 ]; then
-    echo "This script must be run with sudo."
+    echo "----------------------------------------"
+    echo "| This script must be run with sudo.   |"
+    echo "----------------------------------------"
     exit 1
 fi
 
@@ -11,7 +13,9 @@ git clone https://github.com/hamburgerghini1/garuda_dotfiles_2023.git /tmp/garud
 cd /tmp/garuda-dotfiles-2023
 
 # Print a success message
-echo "Repository cloned successfully!"
+echo "----------------------------------------"
+echo "| Repository cloned successfully!      |"
+echo "----------------------------------------"
 
 # Detect package manager
 if command -v apt-get &> /dev/null; then
@@ -23,24 +27,64 @@ elif command -v pacman &> /dev/null; then
 elif command -v zypper &> /dev/null; then
     PACKAGE_MANAGER="zypper"
 else
-    echo "No supported package manager found!"
+    echo "----------------------------------------"
+    echo "| No supported package manager found!  |"
+    echo "----------------------------------------"
     exit 1
 fi
 
-echo "Detected package manager: $PACKAGE_MANAGER"
+echo "----------------------------------------"
+echo "| Detected package manager: $PACKAGE_MANAGER |"
+echo "----------------------------------------"
+
+
+
+echo "----------------------------------------"
+echo "| Installing curl and wget...           |"
+echo "----------------------------------------"
+case "$PACKAGE_MANAGER" in
+    apt-get)
+        apt-get update
+        apt-get install -y curl wget
+        ;;
+    dnf)
+        dnf install -y curl wget
+        ;;
+    pacman)
+        pacman -Syu --noconfirm curl wget
+        ;;
+    zypper)
+        zypper install -y curl wget
+        ;;
+    *)
+        echo "----------------------------------------"
+        echo "| Unsupported package manager: $PACKAGE_MANAGER |"
+        echo "----------------------------------------"
+        exit 1
+        ;;
+esac
+echo "----------------------------------------"
+echo "| curl and wget installed successfully! |"
+echo "----------------------------------------"
 
 # Add RPM Fusion repository for Fedora
 if [ "$PACKAGE_MANAGER" = "dnf" ]; then
-    echo "Adding RPM Fusion repository for Fedora..."
+    echo "----------------------------------------"
+    echo "| Adding RPM Fusion repository for Fedora... |"
+    echo "----------------------------------------"
     dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
     dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-    echo "RPM Fusion repository added successfully!"
+    echo "----------------------------------------"
+    echo "| RPM Fusion repository added successfully! |"
+    echo "----------------------------------------"
 fi
 
 
 # Detect if Nvidia GPU is present
 if lspci | grep -i nvidia &> /dev/null; then
-    echo "Nvidia GPU detected. Installing drivers..."
+    echo "----------------------------------------"
+    echo "| Nvidia GPU detected. Installing drivers... |"
+    echo "----------------------------------------"
     case "$PACKAGE_MANAGER" in
         apt-get)
             apt-get update
@@ -56,16 +100,24 @@ if lspci | grep -i nvidia &> /dev/null; then
             zypper install -y nvidia-glG05
             ;;
         *)
-            echo "Unsupported package manager: $PACKAGE_MANAGER"
+            echo "----------------------------------------"
+            echo "| Unsupported package manager: $PACKAGE_MANAGER |"
+            echo "----------------------------------------"
             exit 1
             ;;
     esac
-    echo "Nvidia drivers installed successfully!"
+    echo "----------------------------------------"
+    echo "| Nvidia drivers installed successfully! |"
+    echo "----------------------------------------"
 else
-    echo "No Nvidia GPU detected."
+    echo "----------------------------------------"
+    echo "| No Nvidia GPU detected.               |"
+    echo "----------------------------------------"
 fi
 
-echo "Installing flatpak and uninstalling snap if installed..."
+echo "----------------------------------------"
+echo "| Installing flatpak and uninstalling snap if installed... |"
+echo "----------------------------------------"
 
 case "$PACKAGE_MANAGER" in
     apt-get)
@@ -98,21 +150,31 @@ case "$PACKAGE_MANAGER" in
         fi
         ;;
     *)
-        echo "Unsupported package manager: $PACKAGE_MANAGER"
+        echo "----------------------------------------"
+        echo "| Unsupported package manager: $PACKAGE_MANAGER |"
+        echo "----------------------------------------"
         exit 1
         ;;
 esac
 
-echo "Adding Flathub repository..."
+echo "----------------------------------------"
+echo "| Adding Flathub repository...          |"
+echo "----------------------------------------"
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-echo "Flatpak installed, Flathub repository added, and snapd handled successfully!"
+echo "----------------------------------------"
+echo "| Flatpak installed, Flathub repository added, and snapd handled successfully! |"
+echo "----------------------------------------"
 
-echo "Installing paru on Arch and nala on Debian based distro..."
+echo "----------------------------------------"
+echo "| Installing paru on Arch and nala on Debian based distro... |"
+echo "----------------------------------------"
 
 case "$PACKAGE_MANAGER" in
     pacman)
-        echo "Detected Arch Linux. Installing paru and aliasing it to yay..."
+        echo "----------------------------------------"
+        echo "| Detected Arch Linux. Installing paru and aliasing it to yay... |"
+        echo "----------------------------------------"
         pacman -S --noconfirm --needed base-devel
         git clone https://aur.archlinux.org/paru.git
         cd paru
@@ -123,45 +185,65 @@ case "$PACKAGE_MANAGER" in
         source ~/.bashrc
         ;;
     apt-get)
-        echo "Detected Debian-based distribution. Installing nala..."
-        NALA_DEB_URL=$(curl -s https://api.github.com/repos/volitank/nala/releases/latest | grep "browser_download_url.*deb" | cut -d '"' -f 4)
+        echo "----------------------------------------"
+        echo "| Detected Debian-based distribution. Installing nala... |"
+        echo "----------------------------------------"
+        NALA_DEB_URL=$(curl -s https://gitlab.com/api/v4/projects/volian%2Fnala/releases | grep -oP '(?<="direct_asset_url":")[^"]*\.deb' | head -n 1)
         wget $NALA_DEB_URL -O nala_latest.deb
         dpkg -i nala_latest.deb
         apt-get install -f -y
         rm nala_latest.deb
         ;;
     *)
-        echo "No additional package manager installation required for $PACKAGE_MANAGER."
+        echo "----------------------------------------"
+        echo "| No additional package manager installation required for $PACKAGE_MANAGER. |"
+        echo "----------------------------------------"
         ;;
 esac
 
-echo "Additional package manager installation completed!"
+echo "----------------------------------------"
+echo "| Additional package manager installation completed! |"
+echo "----------------------------------------"
 
-echo "Installing build essential packages..."
+echo "----------------------------------------"
+echo "| Installing build essential packages... |"
+echo "----------------------------------------"
 
 case "$PACKAGE_MANAGER" in
     paru)
-        echo "Detected Arch Linux. Installing base-devel..."
+        echo "----------------------------------------"
+        echo "| Detected Arch Linux. Installing base-devel... |"
+        echo "----------------------------------------"
         paru -S --noconfirm --needed base-devel
         ;;
     apt-get)
-        echo "Detected Debian-based distribution. Installing build-essential..."
+        echo "----------------------------------------"
+        echo "| Detected Debian-based distribution. Installing build-essential... |"
+        echo "----------------------------------------"
         apt-get update
         apt-get install -y build-essential
         ;;
     zypper)
-        echo "Detected openSUSE. Installing -devel pattern..."
+        echo "----------------------------------------"
+        echo "| Detected openSUSE. Installing -devel pattern... |"
+        echo "----------------------------------------"
         zypper install -t pattern devel_basis
         ;;
     *)
-        echo "Unsupported package manager: $PACKAGE_MANAGER"
+        echo "----------------------------------------"
+        echo "| Unsupported package manager: $PACKAGE_MANAGER |"
+        echo "----------------------------------------"
         exit 1
         ;;
 esac
 
-echo "Build essential packages installation completed!"
+echo "----------------------------------------"
+echo "| Build essential packages installation completed! |"
+echo "----------------------------------------"
 
-echo "Installing programs as flatpaks..."
+echo "----------------------------------------"
+echo "| Installing programs as flatpaks...    |"
+echo "----------------------------------------"
 
 FLATPAK_APPS=(
     "one.ablaze.floorp"
@@ -188,17 +270,25 @@ for app in "${FLATPAK_APPS[@]}"; do
     flatpak install -y flathub "$app"
 done
 
-echo "Flatpak programs installation completed!"
+echo "----------------------------------------"
+echo "| Flatpak programs installation completed! |"
+echo "----------------------------------------"
 
-echo "Installing additional packages..."
+echo "----------------------------------------"
+echo "| Installing additional packages...     |"
+echo "----------------------------------------"
 
 case "$PACKAGE_MANAGER" in
     paru)
-        echo "Installing packages for Arch Linux..."
+        echo "----------------------------------------"
+        echo "| Installing packages for Arch Linux... |"
+        echo "----------------------------------------"
         paru -S --noconfirm --needed swayfx mako wofi rofi swaync waybar polkit-gnome wlroots swaync swaybg swayidle swayr lxappearance noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ms-fonts autotiling fastfetch pw-volume
         ;;
     apt-get)
-        echo "Installing packages for Debian-based distribution..."
+        echo "----------------------------------------"
+        echo "| Installing packages for Debian-based distribution... |"
+        echo "----------------------------------------"
         apt-get update
         apt-get install -y software-properties-common wget
         add-apt-repository ppa:swaywm/sway
@@ -210,18 +300,26 @@ case "$PACKAGE_MANAGER" in
         apt-get install -y ./fastfetch.deb
         ;;
     dnf)
-        echo "Installing packages for Fedora..."
+        echo "----------------------------------------"
+        echo "| Installing packages for Fedora...     |"
+        echo "----------------------------------------"
         dnf copr enable erikreider/SwayNotificationCenter
         dnf install -y sway mako wofi rofi waybar polkit-gnome wlroots swaync swaybg swayidle swayr lxappearance google-noto-sans-fonts google-noto-cjk-fonts google-noto-emoji-fonts fontawesome-fonts msttcore-fonts-installer autotiling fastfetch pulseaudio-utils
         ;;
     zypper)
-        echo "Installing packages for openSUSE..."
+        echo "----------------------------------------"
+        echo "| Installing packages for openSUSE...   |"
+        echo "----------------------------------------"
         zypper install -y sway mako wofi rofi SwayNotificationCenter waybar polkit-gnome wlroots swaync swaybg swayidle swayr lxappearance noto-sans-fonts noto-sans-cjk-fonts noto-emoji-fonts fontawesome-fonts fetchmsttfonts autotiling fastfetch
         ;;
     *)
-        echo "Unsupported package manager: $PACKAGE_MANAGER"
+        echo "----------------------------------------"
+        echo "| Unsupported package manager: $PACKAGE_MANAGER |"
+        echo "----------------------------------------"
         exit 1
         ;;
 esac
 
-echo "Additional packages installation completed!"
+echo "----------------------------------------"
+echo "| Additional packages installation completed! |"
+echo "----------------------------------------"
