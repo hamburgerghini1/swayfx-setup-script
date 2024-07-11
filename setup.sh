@@ -323,3 +323,21 @@ esac
 echo "----------------------------------------"
 echo "| Additional packages installation completed! |"
 echo "----------------------------------------"
+
+if [ ! -f papirus-kolorizer.sh ]; then
+    wget https://github.com/hamburgerghini1/swayfx-setup-script/blob/main/papirus-kolorizer.sh -O papirus-kolorizer.sh
+fi
+
+chmod +x papirus-kolorizer.sh
+./papirus-kolorizer.sh
+
+if [ $? -eq 0 ]; then
+    echo "----------------------------------------"
+    echo "| Papirus icons installed successfully! |"
+    echo "----------------------------------------"
+else
+    echo "----------------------------------------"
+    echo "| Failed to install Papirus icons.      |"
+    echo "----------------------------------------"
+fi
+
