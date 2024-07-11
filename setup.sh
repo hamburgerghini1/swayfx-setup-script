@@ -1,4 +1,7 @@
 #!/bin/bash
+# My personal Linux install script
+# This script is 99% made by AI using Cursor AI Editor, since I'm lazy and I don't know shit about scripting - for now lol
+
 
 if [ "$EUID" -ne 0 ]; then
     echo "----------------------------------------"
@@ -341,3 +344,77 @@ else
     echo "----------------------------------------"
 fi
 
+echo "----------------------------------------"
+echo "| Installing Mullvad VPN...             |"
+echo "----------------------------------------"
+
+# Install Mullvad VPN
+case "$PACKAGE_MANAGER" in
+    apt-get)
+        echo "----------------------------------------"
+        echo "| Detected Debian-based distribution. Adding Mullvad VPN repository and installing... |"
+        echo "----------------------------------------"
+        # Download the Mullvad signing key
+        sudo curl -fsSLo /usr/share/keyrings/mullvad-keyring.asc https://repository.mullvad.net/deb/mullvad-keyring.asc
+        # Add the Mullvad repository server to apt
+        echo "deb [signed-by=/usr/share/keyrings/mullvad-keyring.asc arch=$( dpkg --print-architecture )] https://repository.mullvad.net/deb/stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mullvad.list
+        # Install the package
+        sudo apt update
+        sudo apt install -y mullvad-vpn
+        ;;
+    dnf)
+        echo "----------------------------------------"
+        echo "| Detected Fedora. Adding Mullvad VPN repository and installing... |"
+        echo "----------------------------------------"
+        # Add the Mullvad repository server to dnf
+        sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo
+        # Install the package
+        sudo dnf install -y mullvad-vpn
+        ;;
+    pacman)
+        echo "----------------------------------------"
+        echo "| Detected Arch Linux. Installing mullvad-vpn-bin from AUR... |"
+        echo "----------------------------------------"
+        paru -S --noconfirm mullvad-vpn-bin
+        ;;
+    *)
+        echo "----------------------------------------"
+        echo "| Unsupported package manager: $PACKAGE_MANAGER |"
+        echo "----------------------------------------"
+        exit 1
+        ;;
+esac
+
+echo "----------------------------------------"
+echo "| Mullvad VPN installation completed!   |"
+echo "----------------------------------------"
+
+# Check for dnf5 and alias it to dnf if available
+echo "----------------------------------------"
+echo "| Checking for dnf5 and aliasing it to dnf if available... |"
+echo "----------------------------------------"
+
+case "$PACKAGE_MANAGER" in
+    dnf)
+        echo "----------------------------------------"
+        echo "| Detected Fedora. Attempting to install dnf5... |"
+        echo "----------------------------------------"
+        if sudo dnf install -y dnf5; then
+            echo "alias dnf='dnf5'" >> ~/.bashrc
+            source ~/.bashrc
+            echo "----------------------------------------"
+            echo "| dnf5 installed and aliased to dnf successfully! |"
+            echo "----------------------------------------"
+        else
+            echo "----------------------------------------"
+            echo "| Failed to install dnf5. Please check your repository settings or try again later. |"
+            echo "----------------------------------------"
+            exit 1
+        fi
+        ;;
+    *)
+        echo "----------------------------------------"
+        echo "| No dnf5 installation required for $PACKAGE_MANAGER. |"
+        echo "----------------------------------------"
+        ;;
+esac
