@@ -2,15 +2,6 @@
 # My personal Linux install script
 # This script is 99% made by AI using Cursor AI Editor, since I'm lazy and I don't know shit about scripting - for now lol
 
-
-if [ "$EUID" -ne 0 ]; then
-    echo "----------------------------------------"
-    echo "| This script must be run with sudo.   |"
-    echo "----------------------------------------"
-    exit 1
-fi
-
-
 # Clone the repository
 git clone https://github.com/hamburgerghini1/garuda_dotfiles_2023.git /tmp/garuda-dotfiles-2023
 cd /tmp/garuda-dotfiles-2023
