@@ -6,7 +6,11 @@ on:
 
 jobs:
   run-setup-script:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, fedora-latest, arch-latest, opensuse-tumbleweed]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout repository
