@@ -14,5 +14,5 @@ jobs:
 
     - name: Run setup script
       run: |
-        chmod +x setup.sh
-        ./setup.sh
+        sudo chmod +x setup.sh
+        sudo ./setup.sh
