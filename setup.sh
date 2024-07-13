@@ -555,10 +555,6 @@ cd /tmp/spotify-adblock
 make
 sudo make install
 
-echo "----------------------------------------"
-echo "| Adblock for Spotify installation completed successfully! |"
-echo "----------------------------------------"
-
 # Check if Spotify is installed as a Flatpak
 if flatpak list | grep -q com.spotify.Client; then
     mkdir -p ~/.spotify-adblock && cp target/release/libspotifyadblock.so ~/.spotify-adblock/spotify-adblock.so
@@ -567,3 +563,17 @@ if flatpak list | grep -q com.spotify.Client; then
 else
     echo "Spotify is not installed as a Flatpak. Skipping additional configuration."
 fi
+
+echo "----------------------------------------"
+echo "| Adblock for Spotify installation completed successfully! |"
+echo "----------------------------------------"
+
+
+echo "----------------------------------------"
+echo "| Adding desktop entry for spotify-adblock... |"
+echo "----------------------------------------"
+
+cp spotify-adblock.desktop ~/.local/share/applications/
+
+echo "----------------------------------------"
+echo "| Desktop entry added successfully! |"
