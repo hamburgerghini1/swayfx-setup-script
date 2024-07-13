@@ -1,4 +1,4 @@
-name: Run setup script
+name: Run on openSUSE
 
 on:
   schedule:
