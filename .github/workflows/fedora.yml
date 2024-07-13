@@ -1,0 +1,22 @@
+name: Run setup script
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every 24 hours
+
+jobs:
+  run-setup-script:
+    strategy:
+      matrix:
+        os: [fedora-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Run setup script
+      run: |
+        chmod +x setup.sh
+        sudo ./setup.sh
