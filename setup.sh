@@ -577,3 +577,13 @@ cp spotify-adblock.desktop ~/.local/share/applications/
 
 echo "----------------------------------------"
 echo "| Desktop entry added successfully! |"
+
+echo "----------------------------------------"
+echo "| Installing PulseEffects-Presets... |"
+echo "----------------------------------------"
+
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
+
+4echo "----------------------------------------"
+echo "| PulseEffects-Presets installation completed! |"
+echo "----------------------------------------"
