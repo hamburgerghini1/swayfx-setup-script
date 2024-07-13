@@ -409,3 +409,139 @@ case "$PACKAGE_MANAGER" in
         echo "----------------------------------------"
         ;;
 esac
+
+# Zsh and Oh My Zsh install.
+echo "----------------------------------------"
+echo "| Installing zsh...                     |"
+echo "----------------------------------------"
+case "$PACKAGE_MANAGER" in
+    apt-get)
+        sudo apt-get update
+        sudo apt-get install -y zsh
+        ;;
+    dnf)
+        sudo dnf install -y zsh
+        ;;
+    pacman)
+        sudo pacman -Syu --noconfirm zsh
+        ;;
+    zypper)
+        sudo zypper install -y zsh
+        ;;
+    *)
+        echo "----------------------------------------"
+        echo "| Unsupported package manager: $PACKAGE_MANAGER |"
+        echo "----------------------------------------"
+        exit 1
+        ;;
+esac
+
+echo "----------------------------------------"
+echo "| zsh installation completed!           |"
+echo "----------------------------------------"
+
+echo "----------------------------------------"
+echo "| Installing oh-my-zsh...               |"
+echo "----------------------------------------"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+echo "----------------------------------------"
+echo "| oh-my-zsh installation completed!     |"
+echo "----------------------------------------"
+
+echo "----------------------------------------"
+echo "| Cloning mybash repo by Chris Titus Tech...          |"
+echo "----------------------------------------"
+git clone https://github.com/christitustech/mybash.git /tmp/mybash
+cd /tmp/mybash
+
+echo "----------------------------------------"
+echo "| Running setup.sh from mybash repo...  |"
+echo "----------------------------------------"
+chmod +x setup.sh
+./setup.sh
+
+echo "----------------------------------------"
+echo "| mybash setup completed!               |"
+echo "----------------------------------------"
+
+echo "----------------------------------------"
+echo "| Copying .bashrc to home directory...  |"
+echo "----------------------------------------"
+cp /tmp/mybash/.bashrc ~/
+
+echo "----------------------------------------"
+echo "| .bashrc has been updated!             |"
+echo "----------------------------------------"
+
+echo "----------------------------------------"
+echo "| Cloning Top-5-Bootloader-Themes repo by Chris Titus Tech... |"
+echo "----------------------------------------"
+git clone https://github.com/ChrisTitusTech/Top-5-Bootloader-Themes.git /tmp/Top-5-Bootloader-Themes
+cd /tmp/Top-5-Bootloader-Themes
+
+echo "----------------------------------------"
+echo "| Running install.sh from Top-5-Bootloader-Themes repo... |"
+echo "----------------------------------------"
+chmod +x install.sh
+./install.sh
+
+echo "----------------------------------------"
+echo "| Top-5-Bootloader-Themes setup completed! |"
+echo "----------------------------------------"
+
+echo "----------------------------------------"
+echo "| Installing distrobox, podman, and docker... |"
+echo "----------------------------------------"
+case "$PACKAGE_MANAGER" in
+    apt-get)
+        apt-get update
+        apt-get install -y distrobox podman docker.io
+        ;;
+    dnf)
+        dnf install -y distrobox podman docker
+        ;;
+    zypper)
+        zypper install -y distrobox podman docker
+        ;;
+esac
+
+echo "----------------------------------------"
+echo "| distrobox, podman, and docker installation completed! |"
+echo "----------------------------------------"
+
+if [ "$PACKAGE_MANAGER" != "pacman" ]; then
+    echo "----------------------------------------"
+    echo "| Creating Arch Linux distrobox container... |"
+    echo "----------------------------------------"
+    distrobox-create --name arch-container --image docker.io/library/archlinux:latest
+
+    echo "----------------------------------------"
+    echo "| Arch Linux distrobox container created successfully! |"
+    echo "----------------------------------------"
+else
+    echo "----------------------------------------"
+    echo "| Skipping Arch Linux distrobox container creation as the system is already using Arch Linux. |"
+    echo "----------------------------------------"
+fi
+
+echo "----------------------------------------"
+echo "| Entering Arch Linux distrobox container and updating... |"
+echo "----------------------------------------"
+distrobox-enter --name arch-container --command "sudo pacman -Syu --noconfirm"
+
+echo "----------------------------------------"
+echo "| Arch Linux distrobox container updated successfully! |"
+echo "----------------------------------------"
+
+echo "----------------------------------------"
+echo "| Installing VMWare Workstation Pro using AUR in the Arch Linux distrobox... |"
+echo "----------------------------------------"
+distrobox-enter --name arch-container --command "sudo pacman -S --noconfirm base-devel git"
+distrobox-enter --name arch-container --command "git clone https://aur.archlinux.org/yay.git /tmp/yay"
+distrobox-enter --name arch-container --command "cd /tmp/yay && makepkg -si --noconfirm"
+distrobox-enter --name arch-container --command "yay -S --noconfirm vmware-workstation"
+
+echo "----------------------------------------"
+echo "| VMWare Workstation Pro installation completed successfully! |"
+echo "----------------------------------------"
+
