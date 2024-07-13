@@ -1,5 +1,4 @@
-name: Run setup script
-
+name: Run on Ubuntu
 on:
   schedule:
     - cron: '0 0 * * *' # Runs every 24 hours
