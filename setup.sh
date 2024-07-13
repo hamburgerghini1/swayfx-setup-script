@@ -550,7 +550,7 @@ echo "| Installing Adblock for Spotify... |"
 echo "----------------------------------------"
 
 # Clone the repository
-git clone https://github.com/abba23/spotify-adblock.git /tmp/spotify-adblock
+git clone https://github.com/hamburgerghini1/spotify-adblock.git /tmp/spotify-adblock
 cd /tmp/spotify-adblock
 make
 sudo make install
