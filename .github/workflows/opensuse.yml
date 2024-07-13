@@ -1,0 +1,30 @@
+name: Run setup script
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every 24 hours
+
+jobs:
+  run-setup-script:
+    runs-on: ubuntu-latest
+
+    container:
+      image: opensuse/leap:latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        zypper -n ref
+        zypper -n install sudo
+        echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel
+        useradd -m -G wheel -s /bin/bash github
+        echo 'github ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+        sudo -u github bash <<EOF
+          whoami
+          sudo zypper -n ref
+          chmod +x setup.sh
+          sudo ./setup.sh
+        EOF
