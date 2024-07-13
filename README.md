@@ -1,1 +1,1 @@
-Mostly made with Ollama, expect errors :D
+Mostly made using AI, expect errors :D
