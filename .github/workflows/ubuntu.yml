@@ -8,7 +8,7 @@ jobs:
   run-setup-script:
     strategy:
       matrix:
-        os: [ubuntu-latest, fedora-latest, arch-latest, opensuse-tumbleweed]
+        os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
