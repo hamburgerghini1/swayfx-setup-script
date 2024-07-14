@@ -18,7 +18,7 @@ jobs:
     - name: Install dependencies
       run: |
         zypper -n ref
-        zypper -n install sudo
+        zypper -n install sudo tar
         echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel
         useradd -m -G wheel -s /bin/bash github
         echo 'github ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
