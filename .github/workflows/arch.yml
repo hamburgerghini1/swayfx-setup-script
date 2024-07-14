@@ -22,9 +22,9 @@ jobs:
         echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel
         useradd -m -G wheel -s /bin/bash github
         echo 'github ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-        sudo -u github bash <<EOF
+       -u github bash <<EOF
           whoami
-          sudo pacman -Syu --noconfirm
+          pacman -Syu --noconfirm
           chmod +x setup.sh
-          sudo ./setup.sh
+          ./setup.sh
         EOF
