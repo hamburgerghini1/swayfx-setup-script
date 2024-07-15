@@ -560,23 +560,28 @@ if flatpak list | grep -q com.spotify.Client; then
     mkdir -p ~/.spotify-adblock && cp target/release/libspotifyadblock.so ~/.spotify-adblock/spotify-adblock.so
     mkdir -p ~/.config/spotify-adblock && cp config.toml ~/.config/spotify-adblock
     flatpak override --user --filesystem="~/.spotify-adblock/spotify-adblock.so" --filesystem="~/.config/spotify-adblock/config.toml" com.spotify.Client
+    # Copy the desktop file for Flatpak Spotify
+    cp spotify-adblock.flatpak.desktop ~/.local/share/applications/
 else
-    echo "Spotify is not installed as a Flatpak. Skipping additional configuration."
+    # Check if Spotify is installed via deb package or using apt
+    if dpkg -l | grep -q spotify; then
+        # Copy the desktop file for Debian Spotify
+        cp spotify-adblock-debian.desktop ~/.local/share/applications/
+    else
+        # Check if Spotify is installed via rpm package or using dnf/zypper
+        if rpm -qa | grep -q spotify; then
+            echo "You are using Fedora or OpenSUSE package for Spotify. Please create the desktop entry manually or switch to flatpak."
+        elif [ "$PACKAGE_MANAGER" = "pacman" ]; then
+            echo "You are using Arch Linux package for Spotify. Please create the desktop entry manually or switch to flatpak."
+        else
+            echo "Spotify is not installed as a Flatpak or via deb package. Skipping creation of desktop entry."
+        fi
+    fi
 fi
 
 echo "----------------------------------------"
 echo "| Adblock for Spotify installation completed successfully! |"
 echo "----------------------------------------"
-
-
-echo "----------------------------------------"
-echo "| Adding desktop entry for spotify-adblock... |"
-echo "----------------------------------------"
-
-cp spotify-adblock.desktop ~/.local/share/applications/
-
-echo "----------------------------------------"
-echo "| Desktop entry added successfully! |"
 
 echo "----------------------------------------"
 echo "| Installing PulseEffects-Presets... |"
