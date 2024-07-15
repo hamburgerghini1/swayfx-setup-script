@@ -28,3 +28,6 @@ jobs:
           chmod +x setup.sh
           sudo ./setup.sh
         EOF
+    - name: Ensure tar is executable
+      run: |
+        chmod +x /usr/bin/tar
